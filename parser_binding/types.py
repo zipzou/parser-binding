@@ -310,7 +310,7 @@ def BindingField(
 
     if help is not None:
         meta_info['help'] = help
-    if file is not None:
+    if file:
         meta_info['file'] = file
         meta_info['type'] = file
         meta_info.pop('sep')
