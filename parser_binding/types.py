@@ -6,7 +6,7 @@ import sys
 from argparse import ArgumentTypeError, FileType
 from dataclasses import MISSING, dataclass, field
 from enum import Enum
-from typing import IO, Any, Callable, List, Optional, Set, TypeVar
+from typing import IO, Any, Callable, List, Optional, Set, TypeVar, Union
 
 DataclassType = TypeVar('DataclassType')
 _ActualDType = TypeVar('_ActualDType')
@@ -142,7 +142,8 @@ class BindingType:
     name: str
     type: Optional[Callable] = None
     aliases: Optional[List[str]] = None
-    choices: Optional[List[_ActualDType]] = None
+    choices: Optional[Union[List[_ActualDType],
+                            Callable[[], List[_ActualDType]]]] = None
     multiple: bool = False
     default: Optional[_ActualDType] = None
     seperator: Optional[str] = None
@@ -246,7 +247,10 @@ class BindingType:
             else:
                 return 2
 
-        final_options = sorted(list(final_options), key=compare_option)
+        final_options = sorted(
+            sorted(list(final_options), key=lambda x: len(x)),
+            key=compare_option
+        )
 
         return final_options
 
@@ -257,7 +261,7 @@ def BindingField(
     type: Optional[Callable] = None,
     required: bool = False,
     sep: Optional[str] = None,
-    choices: Optional[List[str]] = None,
+    choices: Optional[Union[List[str], Callable[[], List[str]]]] = None,
     aliases: Optional[List[str]] = None,
     help: Optional[str] = None,
     file: bool = False,

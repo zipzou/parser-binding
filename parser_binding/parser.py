@@ -106,14 +106,21 @@ class BindingParser(ArgumentParser):
         self._field_info = res
         for name, _type in res.items():
             kwargs = {
-                'action': _type.action,
+                'action':
+                _type.action,
                 'nargs':
                 '*' if _type.multiple and _type.seperator is None else None,
-                'default': _type.default,
-                'type': _type.type,
-                'choices': _type.choices,
-                'help': ' '.join((_type.help, _type.help_suffix)),
-                'required': _type.required
+                'default':
+                _type.default,
+                'type':
+                _type.type,
+                'choices':
+                _type.choices
+                if not callable(_type.choices) else _type.choices(),
+                'help':
+                ' '.join((_type.help, _type.help_suffix)),
+                'required':
+                _type.required
             }
             if _type.is_switch:
                 for k in ('nargs', 'type', 'choices'):
